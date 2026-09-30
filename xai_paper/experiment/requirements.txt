@@ -1,0 +1,12 @@
+torch
+transformers
+datasets
+shap
+captum
+sentencepiece
+sacremoses
+scipy
+pandas
+matplotlib
+python-Levenshtein
+sacrebleu
