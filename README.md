@@ -8,12 +8,15 @@ This term paper project compares **SHAP** and **Integrated Gradients** explanati
 
 **296 source sentences · 575 retained pairs · 2 explanation methods**
 
+**The experiment was carried out in a Kaggle Notebook.** This repository contains the supporting Python scripts, exported results, and term paper materials.
+
 [Read the abstract](paper/abstract.pdf) · [Explore the results](experiment/results/pilot_results.csv) · [Browse the code](experiment/src) · [Run on Kaggle](experiment/KAGGLE_TUTORIAL.md)
 
 ## Experiment at a glance
 
 | Component | Approach |
 | :--- | :--- |
+| Execution environment | Kaggle Notebook |
 | Task | Binary sentiment classification |
 | Dataset | SST-2 validation split (`glue`, `sst2`) |
 | Classifier | `distilbert-base-uncased-finetuned-sst-2-english` |
@@ -28,7 +31,7 @@ The classifier is pretrained; this repository audits explanations rather than tr
 
 ## Results
 
-The committed CSV contains **575 pairs** from **296 distinct source sentences**: 287 German-pivot pairs and 288 French-pivot pairs. The values below were calculated from that CSV.
+The results exported from the Kaggle Notebook are committed in the CSV, which contains **575 pairs** from **296 distinct source sentences**: 287 German-pivot pairs and 288 French-pivot pairs. The values below were calculated from that CSV.
 
 | Measure | SHAP mean | IG mean | SHAP median | IG median |
 | :--- | ---: | ---: | ---: | ---: |
@@ -39,47 +42,43 @@ Mean lexical overlap is **0.795**. Both methods retain roughly 62% of the origin
 
 These measures describe **attribution stability under paraphrasing**. Stability alone does not establish that an explanation faithfully captures the model's reasoning.
 
-## Getting started
+## Running on Kaggle
 
-Clone the repository and create a virtual environment:
+The reported experiment was run in a **Kaggle Notebook**. See the [Kaggle tutorial](experiment/KAGGLE_TUTORIAL.md) for the original workflow of attaching project files as a Dataset input and copying them into the writable working directory.
+
+To run the cleaned repository in a new Kaggle Notebook, enable **Internet** for the Hugging Face downloads and run this notebook cell:
 
 ```bash
+%%bash
+cd /kaggle/working
 git clone https://github.com/cerenozbakir/faithfulness-under-paraphrase.git
 cd faithfulness-under-paraphrase
-python -m venv .venv
+python -m pip install -r experiment/requirements.txt
+python experiment/src/run_pilot.py
 ```
 
-Activate the environment:
+This runs the default **15-example pilot**, which is smaller than the published experiment. The first run downloads the classifier, dataset, and four translation models.
+
+> **Keep the published results:** running the pipeline overwrites `experiment/results/pilot_results.csv`. Copy it elsewhere first if you want to compare a new run with the committed Kaggle results.
+
+To request a larger sample, run another notebook cell:
 
 ```bash
-# macOS / Linux
-source .venv/bin/activate
+%%bash
+cd /kaggle/working/faithfulness-under-paraphrase/experiment
+python -c "from src.run_pilot import main; main(n_examples=300)"
 ```
 
-```powershell
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-```
+The requested sample size is an upper bound; selection filters may yield fewer examples. Dependencies and model revisions are not pinned, so a new environment may require compatibility adjustments and may not reproduce the historical notebook run exactly. The scripts in this repository load models on CPU by default; the original notebook's full environment and any notebook-specific changes are not captured here.
 
-Install the dependencies and run the default 15-example pilot:
+### Optional local execution
+
+The scripts can also be run locally. From a clone of this repository, install the dependencies and run the pilot:
 
 ```bash
 python -m pip install -r experiment/requirements.txt
 python experiment/src/run_pilot.py
 ```
-
-The first run needs internet access to download the classifier, dataset, and four translation models from Hugging Face. SHAP can be slow. **The current implementation runs on CPU**; enabling a GPU alone does not move the models onto it.
-
-> **Keep the published results:** running the pipeline overwrites `experiment/results/pilot_results.csv`. Copy it elsewhere first if you want to compare a new run with the committed results. The default pilot is smaller than the published experiment.
-
-To request a larger sample, run this from `experiment/`:
-
-```bash
-cd experiment
-python -c "from src.run_pilot import main; main(n_examples=300)"
-```
-
-The requested sample size is an upper bound; the selection filters may yield fewer examples. Dependencies and model revisions are not pinned, so a new environment may require compatibility adjustments and may not reproduce the historical run exactly.
 
 ## Repository guide
 
