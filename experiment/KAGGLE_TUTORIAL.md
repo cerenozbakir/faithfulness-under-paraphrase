@@ -8,11 +8,9 @@ reading this repo.
 
 ## Setup
 
-Kaggle notebooks need two settings turned on in the Settings panel before
-anything below will work: **Internet** (off by default — needed for every
-Hugging Face download here) and, optionally, a **GPU accelerator** (free
-weekly quota, speeds up Integrated Gradients and backtranslation; SHAP
-runs on CPU regardless).
+Enable **Internet** in the notebook settings for Hugging Face downloads.
+The current implementation loads the classifier and translation models on
+CPU. Selecting a GPU accelerator alone does not accelerate this code.
 
 ## Hugging Face resources this fetches
 
@@ -112,17 +110,22 @@ reasoning.
 ### Running it end to end
 
 ```bash
+cd /kaggle/working/faithfulness-under-paraphrase/experiment
+python -m pip install -r requirements.txt
 python src/run_pilot.py
 ```
 
-Loops the above over `n_examples` sentences and both pivots, writes
-`results/pilot_results.csv`. I attached this repo to the Kaggle notebook
-as a Dataset input (Kaggle's way of bringing in outside files), copied it
-into the writable `/kaggle/working/` directory, and ran this from there.
+Run the shell commands above in a `%%bash` notebook cell. They assume
+the cleaned repository has been copied to
+`/kaggle/working/faithfulness-under-paraphrase`; adjust the path if needed.
+The default run requests 15 examples and writes `results/pilot_results.csv`.
+Back up that CSV before running to preserve the recorded results.
+I originally attached the project as a Dataset input and copied it into
+the writable `/kaggle/working/` directory.
 
 ## Status
 
-Pipeline mechanics verified offline via `smoke_test.py` (no internet
-needed — checks the SHAP/Captum calling conventions and metrics logic
-against a tiny toy model). Haven't yet run the real pipeline against the
-pretrained models — that's next.
+The repository includes a completed run: 575 retained paraphrase pairs
+from 296 source sentences. See the [project README](../README.md) for
+results and limitations. `smoke_test.py` separately exercises the
+SHAP/Captum calls and metrics with a toy model and no model downloads.

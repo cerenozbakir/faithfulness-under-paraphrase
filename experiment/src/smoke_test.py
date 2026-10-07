@@ -12,13 +12,10 @@ it somewhere with internet access (your machine or Google Colab).
 """
 
 import random
-import sys
 
 import numpy as np
 import torch
 import torch.nn as nn
-
-sys.path.insert(0, "/root/work/xai_paper/experiment/src")
 
 from metrics import common_word_rank_correlation, top_k_salience_retention, word_overlap_ratio
 
